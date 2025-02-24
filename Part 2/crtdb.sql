@@ -32,3 +32,25 @@ CREATE TABLE Attends (
 	FOREIGN KEY (memberId) REFERENCES Member,
 	FOREIGN KEY (classId) REFERENCES Class
 );
+CREATE TABLE Member(
+	memberId INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(50) NOT NULL,
+	email VARCHAR(50) NOT NULL UNIQUE,
+	phone VARCHAR(25), 
+	address VARCHAR(100),
+	age INTEGER NOT NULL CHECK(age>=15),
+	membershipStartDate DATE NOT NULL,
+	membershipEndDate DATE NOT NULL CHECK(membershipEndDate>=membershipStartDate)
+
+);
+CREATE TABLE Class(
+	classId INTEGER PRIMARY KEY AUTOINCREMENT,
+	className VARCHAR(50) NOT NULL,
+	classType VARCHAR(25) NOT NULL CHECK(classType IN ('Yoga','Zumba','HIIT','Weights')),
+	duration INTEGER NOT NULL,
+	classCapacity INTEGER NOT NULL,
+	instructorId INTEGER,
+	gymId INTEGER,
+	FOREIGN KEY (instructorId) REFERENCES Instructor(instructorId),
+	FOREIGN KEY (gymId) REFERENCES GymFacility(gymId)
+);
