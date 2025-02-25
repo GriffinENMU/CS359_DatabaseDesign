@@ -2,10 +2,22 @@
 
 
 -- 2. Insert Instructor Records
-
+INSERT INTO Instructor (name, specialty, phone, email)
+VALUES
+('Steve Rogers', 'Strength Training', '+1 555 554-001', 'steve@avengers.com'),
+('Natasha Romanoff', 'HITT & Combat Training', '+1 555 554-0002', 'natasha@shield.com'),
+('Tony Stark', 'Advanced Weightlifting', '+1 555 554-0003', 'tony@starkindustries.com'),
+('Barry Allen', 'Speed & Endurance Training', '+1 555 554-0004', 'barry@ccpd.com'),
+('Selina Kyle', 'Flexibility & Agility', '+1 555 554-0005', 'selina@gothamcity.com');
 
 -- 3. Insert Membership Plan Records
-
+INSERT INTO MembershipPlan (planType, cost)
+VALUES
+('Monthly', 8.99),
+('Annual', 99.99),
+('Monthly', 12.99),
+('Annual', 80.99),
+('Monthly', 10.99);
 
 -- 4. Insert Member Records
 INSERT INTO Member (name, email, phone, address, age, membershipStartDate, membershipEndDate)
@@ -30,3 +42,13 @@ VALUES
 
 
 -- 7. Insert Attendance Records
+
+-- 8. Insert Equipment Records
+INSERT INTO Equipment (name, type, quantity, gymId)
+VALUES
+-- NULL Placeholders pending full implementation
+('Speed Force Treadmill', 'Cardio', 10, NULL),
+('Bat Dumbbells', 'Strength', 15, NULL),
+('Amazonian Training Mats', 'Flexibility', 30, NULL),
+('Kryptonian Rowing Machine', 'Cardio', 5, NULL),
+('Mjolnir Kettlebells', 'Strength', 12, NULL);

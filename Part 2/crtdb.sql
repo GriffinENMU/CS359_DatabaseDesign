@@ -52,3 +52,26 @@ CREATE TABLE Class(
 	FOREIGN KEY (instructorId) REFERENCES Instructor(instructorId),
 	FOREIGN KEY (gymId) REFERENCES GymFacility(gymId)
 );
+
+CREATE TABLE Instructor (
+	instructorId INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(50) NOT NULL,
+	specialty VARCHAR(50) NOT NULL,
+	phone VARCHAR(15),
+	email VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Equipment (
+	equipmentId INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(50) NOT NULL,
+	type VARCHAR(30) NOT NULL CHECK(type IN ('Cardio', 'Strength', 'Flexibility', 'Recovery')),
+	quantity INTEGER(30) NOT NULL CHECK(quantity>=0),
+	gymId INTEGER,
+	FOREIGN KEY (gymId) REFERENCES GymFacility(gymId)
+);
+
+CREATE TABLE MembershipPlan (
+	planId INTEGER PRIMARY KEY AUTOINCREMENT,
+	planType VARCHAR(20) NOT NULL CHECK(type IN ('Monthly', 'Annual')),
+	cost NUMERIC(10,2) NOT NULL CHECK(cost>=0 AND cost = ROUND(cost, 2))
+);
