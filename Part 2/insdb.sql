@@ -13,11 +13,11 @@ VALUES
 -- 3. Insert Membership Plan Records
 INSERT INTO MembershipPlan (planType, cost)
 VALUES
-('Justice League Tier', 99.99),
-('Avengers Assemble', 79.99),
-('Gotham Night Pass', 49.99),
-('Speedster Plan', 29.99),
-('Mutant Academy Special', 24.99);
+('Monthly', 8.99),
+('Annual', 99.99),
+('Monthly', 12.99),
+('Annual', 80.99),
+('Monthly', 10.99);
 
 -- 4. Insert Member Records
 INSERT INTO Member (name, email, phone, address, age, membershipStartDate, membershipEndDate)
