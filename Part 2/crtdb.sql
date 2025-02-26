@@ -72,6 +72,6 @@ CREATE TABLE Equipment (
 
 CREATE TABLE MembershipPlan (
 	planId INTEGER PRIMARY KEY AUTOINCREMENT,
-	planType VARCHAR(20) NOT NULL CHECK(type IN ('Monthly', 'Annual')),
+	planType VARCHAR(20) NOT NULL CHECK(planType IN ('Monthly', 'Annual')),
 	cost NUMERIC(10,2) NOT NULL CHECK(cost>=0 AND cost = ROUND(cost, 2))
 );
