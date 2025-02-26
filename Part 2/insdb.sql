@@ -1,5 +1,11 @@
 -- 1. Insert GymFacility Records
-
+INSERT INTO GymFacility (location,phone,manager)
+VALUES
+('Portales, NM','+1 575-562-1011','Mark Otto'),
+('Las Cruces, NM','+1 575-646-0111','Jacob Thornton'),
+('Albuquerque, NM','+1 505-277-0111','Larry Page'),
+('Farmington, NM','+1 505-327-3420','Emma Thomas'),
+('Roswell, NM','+1 575-622-1360','John Doe');
 
 -- 2. Insert Instructor Records
 INSERT INTO Instructor (name, specialty, phone, email)
@@ -39,9 +45,22 @@ VALUES
 ('Weekend Bootcamp', 'Weights', 60, 18, NULL, NULL);
 
 -- 6. Insert Payment Records
-
+INSERT INTO Payment (memberId,planId,amountPaid,paymentDate)
+VALUES
+(1,2,99.99,'2025-01-13'),
+(4,2,99.99,'2025-01-20'),
+(3,3,12.99,'2025-01-20'),
+(2,1,8.99,'2025-01-27'),
+(3,3,12.99,'2025-02-20');
 
 -- 7. Insert Attendance Records
+INSERT INTO Attends (memberId,classId,attendanceDate)
+VALUES
+(1,4,'2025-01-13'),
+(1,4,'2025-01-15'),
+(1,4,'2025-01-17'),
+(4,5,'2025-01-18'),
+(1,5,'2025-01-18');
 
 -- 8. Insert Equipment Records
 INSERT INTO Equipment (name, type, quantity, gymId)
