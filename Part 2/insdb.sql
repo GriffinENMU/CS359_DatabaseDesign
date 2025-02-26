@@ -36,13 +36,12 @@ VALUES
 
 -- 5. Insert Class Records
 INSERT INTO Class (className, classType, duration, classCapacity, instructorId, gymId)
-VALUES 
--- NULL placeholder vales need to be update when other tables are complete
-('Zen Yoga', 'Yoga', 60, 15, NULL, NULL),
-('High-Intensity Spin Class', 'HIIT', 45, 20, NULL, NULL),
-('Zumba Dance Party', 'Zumba', 50, 25, NULL, NULL),
-('Strength Training Basics', 'Weights', 75, 12, NULL, NULL),
-('Weekend Bootcamp', 'Weights', 60, 18, NULL, NULL);
+VALUES
+('Zen Yoga', 'Yoga', 60, 15, 5, 1),
+('High-Intensity Spin Class', 'HIIT', 45, 20, 2, 2),
+('Zumba Dance Party', 'Zumba', 50, 25, 5, 1),
+('Strength Training Basics', 'Weights', 75, 12, 1, 2),
+('Weekend Bootcamp', 'Weights', 60, 18, 1, 2);
 
 -- 6. Insert Payment Records
 INSERT INTO Payment (memberId,planId,amountPaid,paymentDate)
@@ -65,9 +64,8 @@ VALUES
 -- 8. Insert Equipment Records
 INSERT INTO Equipment (name, type, quantity, gymId)
 VALUES
--- NULL Placeholders pending full implementation
-('Speed Force Treadmill', 'Cardio', 10, NULL),
-('Bat Dumbbells', 'Strength', 15, NULL),
-('Amazonian Training Mats', 'Flexibility', 30, NULL),
-('Kryptonian Rowing Machine', 'Cardio', 5, NULL),
-('Mjolnir Kettlebells', 'Strength', 12, NULL);
+('Speed Force Treadmill', 'Cardio', 10, 2),
+('Bat Dumbbells', 'Strength', 15, 2),
+('Amazonian Training Mats', 'Flexibility', 30, 1),
+('Kryptonian Rowing Machine', 'Cardio', 5, 2),
+('Mjolnir Kettlebells', 'Strength', 12, 2);
