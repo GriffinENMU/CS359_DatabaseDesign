@@ -1,8 +1,3 @@
---TEMPORARILY CREATED SO THAT THE FOREIGN KEY CONSTRAINT WORKS.
---YOU CAN DROP THEM AND MODIFY THEM TO CREATE THE FINAL TABLES.
---==========
---CREATE TABLE MembershipPlan (planId INTEGER PRIMARY KEY AUTOINCREMENT);
-
 CREATE TABLE GymFacility (
 	gymId INTEGER PRIMARY KEY AUTOINCREMENT,
 	location VARCHAR(100),
@@ -30,6 +25,7 @@ CREATE TABLE Attends (
 	FOREIGN KEY (memberId) REFERENCES Member,
 	FOREIGN KEY (classId) REFERENCES Class
 );
+
 CREATE TABLE Member(
 	memberId INTEGER PRIMARY KEY AUTOINCREMENT,
 	name VARCHAR(50) NOT NULL,
@@ -41,6 +37,7 @@ CREATE TABLE Member(
 	membershipEndDate DATE NOT NULL CHECK(membershipEndDate>=membershipStartDate)
 
 );
+
 CREATE TABLE Class(
 	classId INTEGER PRIMARY KEY AUTOINCREMENT,
 	className VARCHAR(50) NOT NULL,
@@ -49,6 +46,7 @@ CREATE TABLE Class(
 	classCapacity INTEGER NOT NULL,
 	instructorId INTEGER,
 	gymId INTEGER,
+	
 	FOREIGN KEY (instructorId) REFERENCES Instructor(instructorId),
 	FOREIGN KEY (gymId) REFERENCES GymFacility(gymId)
 );
@@ -67,11 +65,12 @@ CREATE TABLE Equipment (
 	type VARCHAR(30) NOT NULL CHECK(type IN ('Cardio', 'Strength', 'Flexibility', 'Recovery')),
 	quantity INTEGER(30) NOT NULL CHECK(quantity>=0),
 	gymId INTEGER,
+	
 	FOREIGN KEY (gymId) REFERENCES GymFacility(gymId)
 );
 
 CREATE TABLE MembershipPlan (
 	planId INTEGER PRIMARY KEY AUTOINCREMENT,
-	planType VARCHAR(20) NOT NULL CHECK(type IN ('Monthly', 'Annual')),
+	planType VARCHAR(20) NOT NULL CHECK(planType IN ('Monthly', 'Annual')),
 	cost NUMERIC(10,2) NOT NULL CHECK(cost>=0 AND cost = ROUND(cost, 2))
 );
