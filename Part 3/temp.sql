@@ -1,17 +1,17 @@
-Using this as the baseline SQL queries to match the requirements in Part 3.
+-- Using this as the baseline SQL queries to match the requirements in Part 3.
 
-1.) Tested to ensure it returns all members.
+-- 1.) Tested to ensure it returns all members.
 SELECT Member.name, Member.email, Member.age, MembershipPlan.planType
 FROM Member
 INNER JOIN Payment ON Member.memberId = Payment.memberId
 INNER JOIN MembershipPlan ON Payment.planId = MembershipPlan.planId;
 
-4.) Confirmed it returns all details for the Equipment, will need to modify to accept Type information.
+-- 4.) Confirmed it returns all details for the Equipment, will need to modify to accept Type information.
 SELECT *
 FROM Equipment
 WHERE type = 'Strength';
 
-7.) Creates a loop where it checks their end date and assigns it as either Active or Expired, then averages and displays both (currently only have Active memberships)
+-- 7.) Creates a loop where it checks their end date and assigns it as either Active or Expired, then averages and displays both (currently only have Active memberships)
 SELECT 
     CASE 
         WHEN Member.membershipEndDate >= DATE('now') THEN 'Active'
@@ -21,7 +21,7 @@ SELECT
 FROM Member
 GROUP BY membership_status;
 
-10.) Tested and it returned 0 results, increased end item from '-1 month' to '-2 month' and confirmed received all Attends data that was relevant.
+-- 10.) Tested and it returned 0 results, increased end item from '-1 month' to '-2 month' and confirmed received all Attends data that was relevant.
 SELECT Member.name, Class.className, Class.classType
 FROM Attends
 INNER JOIN Member ON Attends.memberId = Member.memberId
