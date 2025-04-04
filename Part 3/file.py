@@ -6,7 +6,7 @@ def create_connection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print("[INFO] Connection Established: " + sqlite3.version)
+        print("[INFO] Connection Established: " + sqlite3.sqlite_version)
     except Error as e:
         print(e)
 
@@ -15,9 +15,16 @@ def create_connection(db_file):
 def close_connection(conn):
     conn.close
 
-def select_query(conn, query):
+def select_query(conn, query, extra_param):
     cur = conn.cursor()
-    cur.execute(query)
+
+    if "?" not in query:
+        cur.execute(query)
+    elif extra_param is not None:
+        cur.execute(query, (extra_param,))
+    else:
+        print("This query requires an extra parameter.")
+        sys.exit(1)
 
     rows = cur.fetchall()
 
@@ -25,11 +32,16 @@ def select_query(conn, query):
         print(row)
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("Please ensure you are selecting the appropriate query number when running the file.")
         sys.exit(1)
-    
+
     query_number = int(sys.argv[1])
+
+    try:
+        extra_param = sys.argv[2]
+    except IndexError:
+        extra_param = None
 
     db_path = "XYZGym.sqlite"
 
@@ -50,12 +62,12 @@ def main():
             SELECT DISTINCT name
             FROM Member
             NATURAL JOIN Attends
-            WHERE classId = 4;
+            WHERE classId = ?;
         """,
         4: """
             SELECT *
             FROM Equipment
-            WHERE type = 'Strength';
+            WHERE type = ?;
         """,
         5: """
             SELECT memberId, name, membershipEndDate
@@ -66,11 +78,11 @@ def main():
             SELECT Instructor.name, phone, className, classType, duration, classCapacity
             FROM Instructor
             NATURAL JOIN Class
-            WHERE instructorId = 5;
+            WHERE instructorId = ?;
         """,
         7: """
-            SELECT 
-                CASE 
+            SELECT
+                CASE
                     WHEN Member.membershipEndDate >= DATE('now') THEN 'Active'
                     ELSE 'Expired'
                 END AS membership_status,
@@ -92,7 +104,7 @@ def main():
             WHERE NOT EXISTS (
                 SELECT *
                 FROM Class
-                WHERE classType = 'Weights' AND NOT EXISTS (
+                WHERE classType = ? AND NOT EXISTS (
                     SELECT *
                     FROM Attends
                     WHERE Attends.classId = Class.classId AND Attends.memberId = Member.memberId)
@@ -113,11 +125,11 @@ def main():
 
     conn = create_connection(db_path)
     try:
-        select_query(conn, queries[query_number])
+        select_query(conn, queries[query_number], extra_param)
     except Exception as e:
         print("An error occurred: {e}")
     finally:
         close_connection(conn)
-    
+
 if __name__ == "__main__":
     main()
