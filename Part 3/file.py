@@ -13,9 +13,9 @@ def create_connection(db_file):
     return conn
 
 def close_connection(conn):
-    conn.close
+    conn.close()
 
-def select_query(conn, query, extra_param):
+def select_query(conn, query, extra_param, query_number):
     cur = conn.cursor()
 
     if "?" not in query:
@@ -27,9 +27,85 @@ def select_query(conn, query, extra_param):
         sys.exit(1)
 
     rows = cur.fetchall()
+    # pull the title and headers from the dictionary for the query
+    formatting = query_formatting(query_number)
+    if formatting:
+        #prints the formatted title and divider
+        print(f"\n{formatting['title']}\n" + "-" * len(formatting['title']))
+        #prints the results using the headers from the dictionary
+        print_results(cur, rows, formatting['headers'])
 
-    for row in rows:
-        print(row)
+def query_formatting(query_number):
+    """ Method that holds the dictionary for formatted method titles and headers. """
+    formatting = {
+        1: {
+            "title": "All Gym Members",
+            "headers": ["Member Name", "Email", "Age", "Plan Type"]
+        },
+        2: {
+            "title": "Number of Classes Available at Each Gym",
+            "headers": ["Gym Location", "Class Count"]
+        },
+        3: {
+            "title": "Members Attending a Specific Class",
+            "headers": ["Member Name"]
+        },
+        4: {
+            "title": "Equipment by Type",
+            "headers": ["Equipment ID", "Equipment Name", "Type", "Quantity", "Gym ID"]
+        },
+        5: {
+            "title": "Members with Expired Memberships",
+            "headers": ["Member ID", "Member Name", "Membership End Date"]
+        },
+        6: {
+            "title": "Instructor Class Schedule",
+            "headers": ["Instructor Name", "Phone", "Class Name", "Class Type", "Duration", "Class Capacity"]
+        },
+        7: {
+            "title": "Active/Expired Member Average Age",
+            "headers": ["Membership Status", "Average Age"]
+        },
+        8: {
+            "title": "Top 3 Instructors by Class Count",
+            "headers": ["Instructor ID", "Instructor Name", "Class Count"]
+        },
+        9: {
+            "title": "Members Attending All Classes of a Specified Type",
+            "headers": ["Member ID", "Name", "Email", "Phone", "Address", "Age", "Membership Start Date", "Membership End Date"]
+        },
+        10: {
+            "title": "Recent Class Attendance",
+            "headers": ["Member Name", "Class Name", "Class Type"]
+        }
+    }
+    return formatting.get(query_number)
+        
+def print_results(cursor, rows, custom_headers=None):
+    """ Method to format the result from each query. It uses a dictionary to produce formatted titles and headers for the results.
+    """
+    if not rows:
+        print("[INFO] No results found.")
+        return
+
+    # extract header names from the query result
+    db_headers = [desc[0] for desc in cursor.description]
+    headers=custom_headers
+        # change data to strings
+    str_rows = [tuple(str(item) for item in row) for row in rows]
+        # join the headers and find the length of the row
+    all_rows = [headers] + str_rows
+    col_widths = [max(len(row[i]) for row in all_rows) for i in range(len(headers))]
+    # construct the header
+    header_line = "  ".join(f"{headers[i]:<{col_widths[i]}}" for i in range(len(headers)))
+    separator = "=" * len(header_line)
+    print(header_line)
+    print(separator)
+    # for loop to print the data from the query
+    for row in str_rows:
+        row_line = "  ".join(f"{row[i]:<{col_widths[i]}}" for i in range(len(row)))
+        print(row_line)
+
 
 def main():
     if len(sys.argv) < 2:
@@ -67,7 +143,7 @@ def main():
         4: """
             SELECT *
             FROM Equipment
-            WHERE type = ?;
+            WHERE LOWER(type) = LOWER(?);
         """,
         5: """
             SELECT memberId, name, membershipEndDate
@@ -104,7 +180,7 @@ def main():
             WHERE NOT EXISTS (
                 SELECT *
                 FROM Class
-                WHERE classType = ? AND NOT EXISTS (
+                WHERE LOWER(classType) = LOWER(?) AND NOT EXISTS (
                     SELECT *
                     FROM Attends
                     WHERE Attends.classId = Class.classId AND Attends.memberId = Member.memberId)
@@ -125,9 +201,9 @@ def main():
 
     conn = create_connection(db_path)
     try:
-        select_query(conn, queries[query_number], extra_param)
+        select_query(conn, queries[query_number], extra_param, query_number)
     except Exception as e:
-        print("An error occurred: {e}")
+        print(f"An error occurred: {e}")
     finally:
         close_connection(conn)
 
