@@ -1,0 +1,12 @@
+{
+	"sqltools.useNodeRuntime": true,
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "Part 3",
+			"group": "CS 359",
+			"database": "./XYZGym.sqlite"
+		}
+	]
+}

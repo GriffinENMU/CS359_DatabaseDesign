@@ -35,8 +35,8 @@ FROM Instructor
 WHERE instructorId = 5;
 
 -- 7.) Creates a loop where it checks their end date and assigns it as either Active or Expired, then averages and displays both (currently only have Active memberships)
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN Member.membershipEndDate >= DATE('now') THEN 'Active'
         ELSE 'Expired'
     END AS membership_status,
@@ -44,7 +44,7 @@ SELECT
 FROM Member
 GROUP BY membership_status;
 
--- 8.) Returns the top three instructors who teach the most classes and the count of classes 
+-- 8.) Returns the top three instructors who teach the most classes and the count of classes
 
     SELECT I.instructorId, I.name, COUNT(C.classId) AS class_count
     FROM Instructor I
@@ -55,10 +55,14 @@ GROUP BY membership_status;
 -- 9.) Tested, it works (please ask me if you have any questions about how this works)
 SELECT *
 FROM Member
-WHERE NOT EXISTS (
+WHERE EXISTS (
 	SELECT *
 	FROM Class
-	WHERE classType = 'Weights' AND NOT EXISTS (
+	WHERE LOWER(classType) = LOWER('Weights')
+) AND NOT EXISTS (
+	SELECT *
+	FROM Class
+	WHERE LOWER(classType) = LOWER('Weights') AND NOT EXISTS (
 		SELECT *
 		FROM Attends
 		WHERE Attends.classId = Class.classId AND Attends.memberId = Member.memberId)
