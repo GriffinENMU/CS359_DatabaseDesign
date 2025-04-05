@@ -20,11 +20,13 @@ def select_query(conn, query, extra_param, query_number):
 
     if "?" not in query:
         cur.execute(query)
-    elif extra_param is not None:
-        cur.execute(query, (extra_param,))
-    else:
+    elif extra_param is None:
         print("This query requires an extra parameter.")
         sys.exit(1)
+    elif query_number == 9:
+        cur.execute(query, (extra_param, extra_param))
+    else:
+        cur.execute(query, (extra_param,))
 
     rows = cur.fetchall()
     # pull the title and headers from the dictionary for the query
@@ -80,7 +82,7 @@ def query_formatting(query_number):
         }
     }
     return formatting.get(query_number)
-        
+
 def print_results(cursor, rows, custom_headers=None):
     """ Method to format the result from each query. It uses a dictionary to produce formatted titles and headers for the results.
     """
@@ -177,7 +179,11 @@ def main():
         9: """
             SELECT *
             FROM Member
-            WHERE NOT EXISTS (
+            WHERE EXISTS (
+                SELECT *
+                FROM Class
+                WHERE LOWER(classType) = LOWER(?)
+            ) AND NOT EXISTS (
                 SELECT *
                 FROM Class
                 WHERE LOWER(classType) = LOWER(?) AND NOT EXISTS (
