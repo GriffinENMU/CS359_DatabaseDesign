@@ -1,7 +1,7 @@
 -- Using this as the baseline SQL queries to match the requirements in Part 3.
 
 -- 1.) Tested to ensure it returns all members.
-SELECT Member.name, Member.email, Member.age, MembershipPlan.planType
+SELECT DISTINCT Member.name, Member.email, Member.age, MembershipPlan.planType
 FROM Member
 INNER JOIN Payment ON Member.memberId = Payment.memberId
 INNER JOIN MembershipPlan ON Payment.planId = MembershipPlan.planId;
@@ -40,7 +40,7 @@ SELECT
         WHEN Member.membershipEndDate >= DATE('now') THEN 'Active'
         ELSE 'Expired'
     END AS membership_status,
-    AVG(Member.age) AS average_age
+    CAST(AVG(Member.age) AS INT) AS average_age
 FROM Member
 GROUP BY membership_status;
 
