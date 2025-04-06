@@ -29,6 +29,9 @@ def select_query(conn, query, extra_param, query_number):
         cur.execute(query, (extra_param,))
 
     rows = cur.fetchall()
+    if query_number == 10:
+        rows = attendance_table(rows)
+
     # pull the title and headers from the dictionary for the query
     formatting = query_formatting(query_number)
     if formatting:
@@ -36,6 +39,32 @@ def select_query(conn, query, extra_param, query_number):
         print(f"\n{formatting['title']}\n" + "-" * len(formatting['title']))
         #prints the results using the headers from the dictionary
         print_results(cur, rows, formatting['headers'])
+
+def attendance_table(rows):
+    att_records = {}
+
+    for row in rows:
+        if att_records.get(row[0]) is None:
+            att_records[row[0]] = AttendanceData()
+
+        att_data = att_records[row[0]]
+        att_data.attendances += 1
+        att_data.classes.add(row[1])
+        att_data.class_types.add(row[2])
+
+    formatted_rows = []
+    for name in att_records:
+        att_data = att_records[name]
+        formatted_rows.append(
+            (
+                name,
+                att_data.attendances,
+                ", ".join(att_data.classes),
+                ", ".join(att_data.class_types)
+            )
+        )
+
+    return formatted_rows
 
 def query_formatting(query_number):
     """ Method that holds the dictionary for formatted method titles and headers. """
@@ -78,7 +107,7 @@ def query_formatting(query_number):
         },
         10: {
             "title": "Recent Class Attendance",
-            "headers": ["Member Name", "Class Name", "Class Type"]
+            "headers": ["Member Name", "Total Classes Attended", "Classes Attended", "Class Types"]
         }
     }
     return formatting.get(query_number)
@@ -108,6 +137,11 @@ def print_results(cursor, rows, custom_headers=None):
         row_line = "  ".join(f"{row[i]:<{col_widths[i]}}" for i in range(len(row)))
         print(row_line)
 
+class AttendanceData:
+    def __init__(self):
+        self.attendances = 0
+        self.classes = set()
+        self.class_types = set()
 
 def main():
     if len(sys.argv) < 2:
