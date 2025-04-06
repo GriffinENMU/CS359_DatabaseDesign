@@ -3,6 +3,20 @@ from sqlite3 import Error
 import sys
 
 def create_connection(db_file):
+    """
+    Create a database connection to the SQLite database specified by db_file.
+
+    Parameters
+    ----------
+    db_file : str
+        The path to the SQLite database file.
+
+    Returns
+    -------
+    value : sqlite3.Connection
+        Connection object or None if the connection fails.
+    """
+
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -13,9 +27,35 @@ def create_connection(db_file):
     return conn
 
 def close_connection(conn):
+    """
+    Close the database connection.
+
+    Parameters
+    ----------
+    conn : sqlite3.Connection
+        The connection object to close.
+    """
+
     conn.close()
 
 def select_query(conn, query, extra_param, query_number):
+    """
+    Execute a SELECT query on the database and print the results.
+    Queries 3, 4, 6, and 9 require an extra parameter.
+    For query 10, it formats the results into a specific table format.
+
+    Parameters
+    ----------
+    conn : sqlite3.Connection
+        The connection object to the database.
+    query : str
+        The SQL SELECT query to execute.
+    extra_param : str or None
+        An optional parameter for the SQL query.
+    query_number : int
+        The number identifying the specific query.
+    """
+
     cur = conn.cursor()
 
     if "?" not in query:
@@ -29,6 +69,9 @@ def select_query(conn, query, extra_param, query_number):
         cur.execute(query, (extra_param,))
 
     rows = cur.fetchall()
+    if query_number == 10:
+        rows = attendance_table(rows)
+
     # pull the title and headers from the dictionary for the query
     formatting = query_formatting(query_number)
     if formatting:
@@ -36,6 +79,51 @@ def select_query(conn, query, extra_param, query_number):
         print(f"\n{formatting['title']}\n" + "-" * len(formatting['title']))
         #prints the results using the headers from the dictionary
         print_results(cur, rows, formatting['headers'])
+
+def attendance_table(rows):
+    """
+    Format the results of the attendance query into a more readable format.
+    It groups the results by member name and aggregates the number of attendances,
+    classes attended, and class types.
+
+    Parameters
+    ----------
+    rows : list of tuples
+        The result set from the SQL query.
+
+    Returns
+    -------
+    value : list of tuples
+        The formatted result set.
+    """
+
+    # dictionary to hold attendance data for each member
+    att_records = {}
+
+    for row in rows:
+        # add each member only once to the dictionary
+        if att_records.get(row[0]) is None:
+            att_records[row[0]] = AttendanceData()
+
+        att_data = att_records[row[0]]
+        att_data.attendances += 1
+        # use sets to avoid duplicates
+        att_data.classes.add(row[1])
+        att_data.class_types.add(row[2])
+
+    formatted_rows = []
+    for name in att_records:
+        att_data = att_records[name]
+        formatted_rows.append(
+            (
+                name,
+                att_data.attendances,
+                ", ".join(att_data.classes),
+                ", ".join(att_data.class_types)
+            )
+        )
+
+    return formatted_rows
 
 def query_formatting(query_number):
     """ Method that holds the dictionary for formatted method titles and headers. """
@@ -78,7 +166,7 @@ def query_formatting(query_number):
         },
         10: {
             "title": "Recent Class Attendance",
-            "headers": ["Member Name", "Class Name", "Class Type"]
+            "headers": ["Member Name", "Total Classes Attended", "Classes Attended", "Class Types"]
         }
     }
     return formatting.get(query_number)
@@ -108,6 +196,29 @@ def print_results(cursor, rows, custom_headers=None):
         row_line = "  ".join(f"{row[i]:<{col_widths[i]}}" for i in range(len(row)))
         print(row_line)
 
+class AttendanceData:
+    """
+    The attendance data for each member, which is used to format the results of
+    the attendance query.
+
+    Attributes
+    ----------
+    attendances : int
+        The number of times a member has attended a class.
+    classes : set
+        A set of classes attended by the member.
+    class_types : set
+        A set of class types attended by the member.
+    """
+
+    def __init__(self):
+        """
+        Initialize the AttendanceData object with default values.
+        """
+
+        self.attendances = 0
+        self.classes = set()
+        self.class_types = set()
 
 def main():
     if len(sys.argv) < 2:
@@ -125,7 +236,7 @@ def main():
 
     queries = {
         1: """
-            SELECT Member.name, Member.email, Member.age, MembershipPlan.planType
+            SELECT DISTINCT Member.name, Member.email, Member.age, MembershipPlan.planType
             FROM Member
             INNER JOIN Payment ON Member.memberId = Payment.memberId
             INNER JOIN MembershipPlan ON Payment.planId = MembershipPlan.planId;
@@ -164,7 +275,7 @@ def main():
                     WHEN Member.membershipEndDate >= DATE('now') THEN 'Active'
                     ELSE 'Expired'
                 END AS membership_status,
-                AVG(Member.age) AS average_age
+                CAST(AVG(Member.age) AS INT) AS average_age
             FROM Member
             GROUP BY membership_status;
         """,
