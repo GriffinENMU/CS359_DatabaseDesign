@@ -1,0 +1,14 @@
+{
+	"version": "0.2.0",
+
+	"configurations": [
+		{
+			"name": "Python - Part 4",
+
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Part 4/main.py",
+			"console": "integratedTerminal"
+		}
+	]
+}

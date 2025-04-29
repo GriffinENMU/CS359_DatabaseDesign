@@ -1,0 +1,21 @@
+{
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	"sqltools.useNodeRuntime": true,
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "Part 2",
+			"group": "CS 359",
+			"database": "./Part 2/XYZGym.sqlite"
+		},
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "Part 3",
+			"group": "CS 359",
+			"database": "./Part 3/XYZGym.sqlite"
+		}
+	]
+}
