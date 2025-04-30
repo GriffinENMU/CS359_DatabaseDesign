@@ -1,9 +1,10 @@
 from greet_user import greet_user
 from submenu import subpage
 from util.prompt import prompt_option
+from signin import init_db
+import sys
 
-
-def main_page():
+def main_page(conn):
     """
     The main page of the CLI. It has three options:
 
@@ -23,9 +24,9 @@ def main_page():
 
         match option:
             case 1:
-                greet_user()
+                greet_user(conn)
             case 2:
-                subpage()
+                subpage(conn)
             case _:
                 break
 
@@ -37,12 +38,21 @@ def _main_menu():
 
     print("MAIN MENU")
     print("_____________")
-    print("1) Greet user")
-    print("2) Submenu")
+    print("Please make a selection to open the appropriate menu.")
+    print("1) Members Menu")
+    print("2) Classes Menu")
+    print("3) Equipment Menu")
     print("0) Exit")
 
-    return prompt_option(2)
+    return prompt_option(3)
 
 
 if __name__ == "__main__":
-    main_page()
+    print("Initializing database") 
+    conn = init_db()
+    try:
+        main_page(conn) 
+    finally:
+        print("Closing database")  
+        conn.close()
+        sys.exit(0)
