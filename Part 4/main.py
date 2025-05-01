@@ -4,6 +4,7 @@ from util.prompt import prompt_option
 from signin import init_db
 import sys
 from equipmentmenu import equipment
+from classes import classes
 
 def main_page(conn):
     """
@@ -27,7 +28,7 @@ def main_page(conn):
             case 1:
                 greet_user(conn)
             case 2:
-                subpage(conn)
+                classes(conn)
             case 3:
                 equipment(conn)                
             case _:
