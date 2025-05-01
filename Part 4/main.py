@@ -3,6 +3,7 @@ from submenu import subpage
 from util.prompt import prompt_option
 from signin import init_db
 import sys
+from equipmentmenu import equipment
 
 def main_page(conn):
     """
@@ -27,6 +28,8 @@ def main_page(conn):
                 greet_user(conn)
             case 2:
                 subpage(conn)
+            case 3:
+                equipment(conn)                
             case _:
                 break
 
