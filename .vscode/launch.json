@@ -8,6 +8,7 @@
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Part 4/main.py",
+			"cwd": "${workspaceFolder}/Part 4",
 			"console": "integratedTerminal"
 		}
 	]
