@@ -2,7 +2,7 @@ import sys
 
 from classes import classes
 from equipmentmenu import equipment
-# from members import members_page
+from members import members_page
 from signin import init_db
 from util.prompt import prompt_option
 
@@ -24,7 +24,7 @@ def main_page(conn):
 
         match option:
             case 1:
-                pass
+                members_page(conn)
             case 2:
                 classes(conn)
             case 3:
