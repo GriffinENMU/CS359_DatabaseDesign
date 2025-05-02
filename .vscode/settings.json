@@ -16,6 +16,13 @@
 			"name": "Part 3",
 			"group": "CS 359",
 			"database": "./Part 3/XYZGym.sqlite"
+		},
+		{
+			"previewLimit": 50,
+			"driver": "SQLite",
+			"name": "Part 4",
+			"group": "CS 359",
+			"database": "./Part 4/XYZGym.sqlite"
 		}
 	]
 }
