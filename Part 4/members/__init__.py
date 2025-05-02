@@ -1,5 +1,6 @@
 from members.display import display_members
 from members.add import add_member
+from members.update import update_member
 from util.prompt import prompt_option
 
 
@@ -22,6 +23,8 @@ def members_page(conn):
                 display_members(conn)
             case 2:
                 add_member(conn)
+            case 3:
+                update_member(conn)
             case _:
                 break
 

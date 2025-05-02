@@ -30,7 +30,7 @@ def _prompt_option(max_n):
             continue
 
 
-def prompt_int(prompt, min_value=0, max_value=None):
+def prompt_int(prompt, min_value=0, max_value=None, default=None):
     """
     Prompts the user for an integer input. It keeps prompting until a valid
     integer is entered. It then returns the input.
@@ -38,11 +38,15 @@ def prompt_int(prompt, min_value=0, max_value=None):
     :param prompt: The prompt message to display to the user.
     :param min_value: The minimum value of the input integer.
     :param max_value: The maximum value of the input integer.
+    :param default: The default value to use if the user presses ENTER without
+                    entering anything. If None, the user must enter a value.
     :return: The integer input from the user.
     """
 
     while True:
-        value_str = input(f"{prompt}: ").strip()
+        value_str = input(
+            f"{prompt}{"" if default is None else f" (default: {default})"}: "
+        ).strip()
 
         try:
             # int() will throw an exception if the input is not a number, in
@@ -60,23 +64,33 @@ def prompt_int(prompt, min_value=0, max_value=None):
             return value
 
         except:
+            if default is not None and value_str == "":
+                return default
+
             print("Invalid input. Please enter a valid integer.")
 
 
-def prompt_string(prompt, max_length):
+def prompt_string(prompt, max_length, default=None):
     """
     Prompts the user for a non-empty string input. It keeps prompting until a
     valid input is entered. It then returns the input.
 
     :param prompt: The prompt message to display to the user.
     :param max_length: The maximum length of the input string.
+    :param default: The default value to use if the user presses ENTER without
+                    entering anything. If None, the user must enter a value.
     :return: The non-empty string input from the user.
     """
 
     while True:
-        value = input(f"{prompt}: ").strip()
+        value = input(
+            f"{prompt}{"" if default is None else f" (default: {default})"}: "
+        ).strip()
 
         if len(value) == 0:
+            if default is not None:
+                return default
+
             print("Input cannot be empty. Please try again.")
             continue
 
@@ -89,23 +103,27 @@ def prompt_string(prompt, max_length):
         return value
 
 
-def prompt_table_row(table_name, rows):
+def prompt_table_row(table_name, rows, default=None):
     """
     Prompts the user to select a row from a table in the database. It keeps
     prompting until a valid row is selected. It then returns the selected row.
 
     :param table_name: The name of the table to display.
     :param rows: The rows to display from the table.
+    :param default: The default row to select if the user presses ENTER without
+                    entering anything. If None, the user must select a row. If
+                    -1, the user can select a row or leave it blank to select
+                    None.
     :return: The selected row from the table.
     """
 
-    option = _prompt_table_row(table_name, rows)
+    option = _prompt_table_row(table_name, rows, default)
 
     print()  # Empty line for better readability
     return option
 
 
-def _prompt_table_row(table_name, rows):
+def _prompt_table_row(table_name, rows, default=None):
     if not rows:
         print(f"No {table_name} found.")
         return None
@@ -116,7 +134,9 @@ def _prompt_table_row(table_name, rows):
         print(f"{i + 1}) {row}")
 
     while True:
-        value_str = input(f"Select a {table_name} by number (1-{len(rows)}): ").strip()
+        value_str = input(
+            f"Select a {table_name} by number (1-{len(rows)}{"" if default is None or default == -1 else f", default: {default + 1}"}): "
+        ).strip()
 
         try:
             choice = int(value_str)
@@ -126,7 +146,13 @@ def _prompt_table_row(table_name, rows):
 
             print(f"Please enter a number between 1 and {len(rows)}.")
 
-        except ValueError:
+        except:
+            if default is not None and value_str == "":
+                if default == -1:
+                    return None
+
+                return rows[default]
+
             print("Invalid input. Please enter a number.")
 
 
