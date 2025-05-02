@@ -16,9 +16,8 @@ def prompt_option(max_n):
 
 def _prompt_option(max_n):
     while True:
-        option_str = input("Choose an option: ")
+        option_str = input("Choose an option: ").strip()
 
-        # noinspection PyBroadException
         try:
             # int() will throw an exception if the input is not a number, in
             # which case we restart the loop

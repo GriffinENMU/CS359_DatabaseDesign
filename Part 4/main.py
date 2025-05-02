@@ -1,18 +1,17 @@
-from greet_user import greet_user
-from submenu import subpage
-from util.prompt import prompt_option
-from signin import init_db
 import sys
-from equipmentmenu import equipment
+
+from greet_user import greet_user
 from classes import classes
+from equipmentmenu import equipment
+# from members import members_page
+from signin import init_db
+from util.prompt import prompt_option
+
 
 def main_page(conn):
     """
-    The main page of the CLI. It has three options:
-
-    1. Greet the user whose name is given
-    2. Enter a submenu
-    3. Exit the app by entering 0.
+    The main page of the CLI. It has options to navigate to the members page,
+    classes page, and equipment page. It also has an option to exit the app.
 
     It works by running an infinite loop, which runs the corresponding function
     based on the option entered by the user, and brings us back to this menu
@@ -30,7 +29,7 @@ def main_page(conn):
             case 2:
                 classes(conn)
             case 3:
-                equipment(conn)                
+                equipment(conn)
             case _:
                 break
 
@@ -52,11 +51,13 @@ def _main_menu():
 
 
 if __name__ == "__main__":
-    print("Initializing database") 
+    print("Initializing database")
     conn = init_db()
     try:
-        main_page(conn) 
+        main_page(conn)
+    except Exception as e:
+        print(f"An error occurred: {e}")
     finally:
-        print("Closing database")  
+        print("Closing database")
         conn.close()
         sys.exit(0)
