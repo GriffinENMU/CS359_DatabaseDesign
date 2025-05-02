@@ -84,7 +84,7 @@ def prompt_string(prompt, max_length, default=None):
 
     while True:
         value = input(
-            f"{prompt}{"" if default is None else f" (default: {default})"}: "
+            f"{prompt}{"" if default is None or default == "" else f" (default: {default})"}: "
         ).strip()
 
         if len(value) == 0:
@@ -154,6 +154,32 @@ def _prompt_table_row(table_name, rows, default=None):
                 return rows[default]
 
             print("Invalid input. Please enter a number.")
+
+
+def prompt_yes_no(prompt, default_to_no=False):
+    """
+    Prompts the user for a yes/no answer. It keeps prompting until a valid
+    answer is entered. It then returns True for yes and False for no. If
+    default_to_no is True, pressing ENTER will return False.
+
+    :param prompt: The prompt message to display to the user.
+    :param default_to_no: If True, pressing ENTER will return False.
+    :return: True for yes and False for no.
+    """
+
+    while True:
+        value_str = input(f"{prompt} (y/n){' [n]' if default_to_no else ''}: ").strip()
+
+        if value_str.lower() in ["y", "yes"]:
+            return True
+
+        if value_str.lower() in ["n", "no"]:
+            return False
+
+        if default_to_no and value_str == "":
+            return False
+
+        print("Invalid input. Please enter 'y' or 'n'.")
 
 
 def prompt_enter(to="continue"):
