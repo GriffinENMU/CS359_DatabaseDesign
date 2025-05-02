@@ -1,6 +1,5 @@
 import sys
 
-from greet_user import greet_user
 from classes import classes
 from equipmentmenu import equipment
 # from members import members_page
@@ -25,7 +24,7 @@ def main_page(conn):
 
         match option:
             case 1:
-                greet_user(conn)
+                pass
             case 2:
                 classes(conn)
             case 3:
