@@ -45,7 +45,7 @@ def prompt_int(prompt, min_value=0, max_value=None, default=None):
 
     while True:
         value_str = input(
-            f"{prompt}{"" if default is None else f" (default: {default})"}: "
+            f"{prompt}{'' if default is None else f' (default: {default})'}: "
         ).strip()
 
         try:
@@ -84,7 +84,7 @@ def prompt_string(prompt, max_length, default=None):
 
     while True:
         value = input(
-            f"{prompt}{"" if default is None or default == "" else f" (default: {default})"}: "
+            f"{prompt}{'' if default is None or default == '' else f' (default: {default})'}: "
         ).strip()
 
         if len(value) == 0:
@@ -135,7 +135,7 @@ def _prompt_table_row(table_name, rows, default=None):
 
     while True:
         value_str = input(
-            f"Select a {table_name} by number (1-{len(rows)}{"" if default is None or default == -1 else f", default: {default + 1}"}): "
+            f"Select a {table_name} by number (1-{len(rows)}{'' if default is None or default == -1 else f', default: {default + 1}'}): "
         ).strip()
 
         try:

@@ -67,21 +67,41 @@ def insert_equipment_menu(conn):
     """
     cur = conn.cursor()
 
-    name = input("Equipment name: ").strip()
+    # CHANGED: Require non-empty name
+    while True:
+        name = input("Equipment name: ").strip()
+        if not name:
+            print("Name cannot be empty.")
+        else:
+            break
 
     cur.execute("SELECT DISTINCT type FROM Equipment;")
     types = [r[0] for r in cur.fetchall()]
     print("Allowed types:", types)
-
     while True:
         type_ = input("Equipment type (must match one above): ").strip()
         if type_ in types:
             break
-        print(f" '{type_}' is not a valid type. Please choose from {types}.")
+        print(f"→ '{type_}' is not a valid type. Choose from {types}.")
 
-    quantity = int(input("Quantity (integer): ").strip())
-    gymId = int(input("Gym ID (integer): ").strip())
+    while True:
+        qty_str = input("Quantity (Must be greater than 0): ").strip()
+        try:
+            quantity = int(qty_str)
+            if quantity < 0:
+                print("Quantity must be zero or positive.")
+            else:
+                break
+        except ValueError:
+            print("→ Please enter a valid whole number for quantity.")
 
+    while True:
+        gym_str = input("Gym ID (integer): ").strip()
+        try:
+            gymId = int(gym_str)
+            break
+        except ValueError:
+            print("Please enter a valid whole number for Gym ID.")
     sql = """
     INSERT INTO Equipment(name, type, quantity, gymId)
          VALUES (?, ?, ?, ?)
@@ -108,7 +128,13 @@ def update_equipment_menu(conn):
     """
     cur = conn.cursor()
 
-    equipmentId = int(input("Enter equipment ID to update: ").strip())
+    while True:
+        id_str = input("Enter equipment ID to update: ").strip()
+        try:
+            equipmentId = int(id_str)
+            break
+        except ValueError:
+            print("→ Invalid ID. Please enter an integer.")
 
     cur.execute(
         "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
@@ -124,12 +150,52 @@ def update_equipment_menu(conn):
     print(current)
     print("\nPress ENTER at any prompt to keep its current value.\n")
 
-    name = input(f"New name [{current[1]}]: ").strip() or current[1]
-    type_ = input(f"New type [{current[2]}]: ").strip() or current[2]
-    q_in = input(f"New quantity [{current[3]}]: ").strip()
-    quantity = int(q_in) if q_in else current[3]
-    g_in = input(f"New Gym ID [{current[4]}]: ").strip()
-    gymId = int(g_in) if g_in else current[4]
+    while True:
+        new_name = input(f"New name [{current[1]}]: ").strip()
+        if not new_name:
+            name = current[1]
+            break
+        name = new_name
+        break
+
+    cur.execute("SELECT DISTINCT type FROM Equipment;")
+    types = [r[0] for r in cur.fetchall()]
+    print("Allowed types:", types)
+    while True:
+        new_type = input(f"New type [{current[2]}]: ").strip()
+        if not new_type:
+            type_ = current[2]
+            break
+        if new_type in types:
+            type_ = new_type
+            break
+        else:
+            print(f"→ '{new_type}' is not valid. Choose from {types}.")
+
+    while True:
+        q_in = input(f"New quantity [{current[3]}]: ").strip()
+        if not q_in:
+            quantity = current[3]
+            break
+        try:
+            quantity = int(q_in)
+            if quantity < 0:
+                print("Quantity must be zero or positive.")
+            else:
+                break
+        except ValueError:
+            print("Please enter a valid whole number for quantity.")
+
+    while True:
+        g_in = input(f"New Gym ID [{current[4]}]: ").strip()
+        if not g_in:
+            gymId = current[4]
+            break
+        try:
+            gymId = int(g_in)
+            break
+        except ValueError:
+            print("Please enter a valid whole number for Gym ID.")
 
     sql = """
     UPDATE Equipment
