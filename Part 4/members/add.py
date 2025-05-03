@@ -30,7 +30,7 @@ def add_member(conn):
     membership_plans = cursor.execute("SELECT * FROM MembershipPlan").fetchall()
     selected_plan = prompt_table_row("membership plan", rows=membership_plans)
     membership_end_date_function = (
-        f"DATE('now', '+1 {"month" if selected_plan[1] == 'Monthly' else 'year'}')"
+        f"DATE('now', '+1 {'month' if selected_plan[1] == 'Monthly' else 'year'}')"
     )
 
     cursor.execute(

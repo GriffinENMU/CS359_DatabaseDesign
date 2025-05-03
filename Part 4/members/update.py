@@ -51,7 +51,7 @@ def update_member(conn):
 
     if selected_plan is not None:
         membership_end_date_function = (
-            f"DATE('now', '+1 {"month" if selected_plan[1] == 'Monthly' else 'year'}')"
+            f"DATE('now', '+1 {'month' if selected_plan[1] == 'Monthly' else 'year'}')"
         )
         cursor.execute(
             f"""
