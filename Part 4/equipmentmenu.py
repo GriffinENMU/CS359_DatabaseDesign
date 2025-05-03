@@ -25,8 +25,8 @@ def equipment(conn):
             case 3:
                 update_equipment_menu(conn)
             case 4:
-                delete_equipment_menu(conn)                                
-                                                
+                delete_equipment_menu(conn)
+
             case _:
                 break
 
@@ -47,6 +47,7 @@ def _submenu():
 
     return prompt_option(4)
 
+
 def show_equipment_menu(conn):
     """
     Query all rows in the Equipment table
@@ -66,26 +67,21 @@ def insert_equipment_menu(conn):
     """
     cur = conn.cursor()
 
-    
     name = input("Equipment name: ").strip()
 
-    
     cur.execute("SELECT DISTINCT type FROM Equipment;")
     types = [r[0] for r in cur.fetchall()]
     print("Allowed types:", types)
 
-    
     while True:
         type_ = input("Equipment type (must match one above): ").strip()
         if type_ in types:
             break
         print(f" '{type_}' is not a valid type. Please choose from {types}.")
 
-    
     quantity = int(input("Quantity (integer): ").strip())
-    gymId    = int(input("Gym ID (integer): ").strip())
+    gymId = int(input("Gym ID (integer): ").strip())
 
-    
     sql = """
     INSERT INTO Equipment(name, type, quantity, gymId)
          VALUES (?, ?, ?, ?)
@@ -93,12 +89,13 @@ def insert_equipment_menu(conn):
     cur.execute(sql, (name, type_, quantity, gymId))
     conn.commit()
 
-    
     new_id = cur.lastrowid
     print(f"\nInserted equipment with ID {new_id}.")
-    
-    cur.execute("SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
-        (new_id,))
+
+    cur.execute(
+        "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
+        (new_id,),
+    )
     inserted = cur.fetchone()
     print("\nInserted entry:")
     print(inserted)
@@ -113,10 +110,9 @@ def update_equipment_menu(conn):
 
     equipmentId = int(input("Enter equipment ID to update: ").strip())
 
-   
     cur.execute(
         "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
-        (equipmentId,)
+        (equipmentId,),
     )
     current = cur.fetchone()
     if not current:
@@ -128,15 +124,13 @@ def update_equipment_menu(conn):
     print(current)
     print("\nPress ENTER at any prompt to keep its current value.\n")
 
-    
-    name     = input(f"New name [{current[1]}]: ").strip() or current[1]
-    type_    = input(f"New type [{current[2]}]: ").strip() or current[2]
-    q_in     = input(f"New quantity [{current[3]}]: ").strip()
+    name = input(f"New name [{current[1]}]: ").strip() or current[1]
+    type_ = input(f"New type [{current[2]}]: ").strip() or current[2]
+    q_in = input(f"New quantity [{current[3]}]: ").strip()
     quantity = int(q_in) if q_in else current[3]
-    g_in     = input(f"New Gym ID [{current[4]}]: ").strip()
-    gymId    = int(g_in) if g_in else current[4]
+    g_in = input(f"New Gym ID [{current[4]}]: ").strip()
+    gymId = int(g_in) if g_in else current[4]
 
-    
     sql = """
     UPDATE Equipment
        SET name     = ?,
@@ -148,10 +142,9 @@ def update_equipment_menu(conn):
     cur.execute(sql, (name, type_, quantity, gymId, equipmentId))
     conn.commit()
 
-   
     cur.execute(
         "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
-        (equipmentId,)
+        (equipmentId,),
     )
     updated = cur.fetchone()
     print("\nUpdated entry:")
@@ -174,8 +167,10 @@ def delete_equipment_menu(conn):
         input("Press ENTER to return to the equipment menu.")
         return
 
- 
-    cur.execute("SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;", (equipment_id,))
+    cur.execute(
+        "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
+        (equipment_id,),
+    )
     row = cur.fetchone()
 
     if not row:
@@ -186,8 +181,10 @@ def delete_equipment_menu(conn):
     print("\nSelected entry:")
     print(row)
 
-    confirm = input(f"Are you sure you want to delete equipment #{equipment_id}? (Y/N): ").lower()
-    if confirm != 'y':
+    confirm = input(
+        f"Are you sure you want to delete equipment #{equipment_id}? (Y/N): "
+    ).lower()
+    if confirm != "y":
         print("Delete canceled.")
     else:
         cur.execute("DELETE FROM Equipment WHERE equipmentId = ?;", (equipment_id,))
