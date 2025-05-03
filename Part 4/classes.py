@@ -58,6 +58,9 @@ def listClassAttendance(conn):
 
 def addClass(conn):
     name = input("Class Name (Max 50 Characters): ")[:50]
+    while not name.strip():
+        print("Class name cant be empty")
+        name = input("Class Name (Max 50 Characters): ")[:50]
     classType = input(f"Class type ({VALID_TYPES}): ")
     if classType not in VALID_TYPES:
         print("Invalid class type.")
@@ -108,6 +111,9 @@ def updateClass(conn):
         return
 
     value = input("New Value: ")
+    if updateField == "className" and not value.strip():
+        print("Class Name can't be empty")
+        return
 
     if updateField in ("duration", "classCapacity") and not isPositiveInteger(value):
         print("Value must be a positive number.")
@@ -176,7 +182,7 @@ def findMembersClassID(conn):
     curse = conn.cursor()
     curse.execute(
         """
-                   SELECT Member.memberId, Member.name, Member.email, Member.phone
+                   SELECT DISTINCT Member.memberId, Member.name, Member.email, Member.phone
                    From Member
                    JOIN Attends ON Member.memberId = Attends.memberId
                    Where Attends.classId = ?

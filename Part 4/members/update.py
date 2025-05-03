@@ -1,5 +1,5 @@
 from util.prompt import prompt_string, prompt_int, prompt_table_row, prompt_enter
-
+from util.validators import recordExists, isValidPhone
 
 def update_member(conn):
     """
@@ -26,7 +26,14 @@ def update_member(conn):
     )
     name = prompt_string("Name", max_length=50, default=selected_member[1])
     email = prompt_string("Email", max_length=50, default=selected_member[2])
+    if email != selected_member[2] and recordExists(conn, "Member", "email", email):
+        print("That email already exists. Please use another email.")
+        return        
     phone = prompt_string("Phone", max_length=15, default=selected_member[3])
+    while not isValidPhone(phone):
+        print("Invalid format. Phone number must be 10-15 digits.")
+        phone = prompt_string("Phone", max_length=15, default=phone)  
+          
     address = prompt_string("Address", max_length=100, default=selected_member[4])
     age = prompt_int("Age", min_value=15, default=selected_member[5])
 
