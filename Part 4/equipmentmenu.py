@@ -72,6 +72,8 @@ def insert_equipment_menu(conn):
         name = input("Equipment name: ").strip()
         if not name:
             print("Name cannot be empty.")
+        elif len(name)> 50:
+            print("The name is too long(50 char max)")    
         else:
             break
 
@@ -99,27 +101,32 @@ def insert_equipment_menu(conn):
         gym_str = input("Gym ID (integer): ").strip()
         try:
             gymId = int(gym_str)
-            break
         except ValueError:
             print("Please enter a valid whole number for Gym ID.")
-    sql = """
+            continue
+        cur.execute("SELECT 1 FROM Gym WHERE gymId =?;",(gymId))
+        if not cur.fetchone():
+            print(f"Gym ID {gymId} does not exist.")
+        else:
+            break        
+        sql = """
     INSERT INTO Equipment(name, type, quantity, gymId)
          VALUES (?, ?, ?, ?)
     """
-    cur.execute(sql, (name, type_, quantity, gymId))
-    conn.commit()
+        cur.execute(sql, (name, type_, quantity, gymId))
+        conn.commit()
 
-    new_id = cur.lastrowid
-    print(f"\nInserted equipment with ID {new_id}.")
+        new_id = cur.lastrowid
+        print(f"\nInserted equipment with ID {new_id}.")
 
-    cur.execute(
-        "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
+        cur.execute(
+            "SELECT equipmentId, name, type, quantity, gymId FROM Equipment WHERE equipmentId = ?;",
         (new_id,),
     )
-    inserted = cur.fetchone()
-    print("\nInserted entry:")
-    print(inserted)
-    input("Press ENTER to return to the equipment menu.")
+        inserted = cur.fetchone()
+        print("\nInserted entry:")
+        print(inserted)
+        input("Press ENTER to return to the equipment menu.")
 
 
 def update_equipment_menu(conn):
@@ -155,7 +162,10 @@ def update_equipment_menu(conn):
         if not new_name:
             name = current[1]
             break
-        name = new_name
+        elif len(new_name) > 50:
+            print("Name is too long (Max 50 char.)")
+        else:    
+            name = new_name
         break
 
     cur.execute("SELECT DISTINCT type FROM Equipment;")
@@ -192,10 +202,17 @@ def update_equipment_menu(conn):
             gymId = current[4]
             break
         try:
-            gymId = int(g_in)
-            break
+            candidate = int(g_in)
         except ValueError:
-            print("Please enter a valid whole number for Gym ID.")
+            print("→ Please enter a valid whole number for Gym ID.")
+            continue
+
+        cur.execute("SELECT 1 FROM Gym WHERE gymId = ?;", (candidate,))
+        if not cur.fetchone():
+            print(f"→ Gym ID {candidate} does not exist.")
+        else:
+            gymId = candidate
+            break
 
     sql = """
     UPDATE Equipment
