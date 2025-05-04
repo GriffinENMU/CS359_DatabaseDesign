@@ -166,6 +166,7 @@ def deleteClass(conn):
             )
         else:
             print("Cancelled deletion.")
+            return
 
     curse.execute("DELETE FROM Class WHERE classId = ?", (classId,))
     conn.commit()
