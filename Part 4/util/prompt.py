@@ -45,7 +45,7 @@ def prompt_int(prompt, min_value=0, max_value=None, default=None):
 
     while True:
         value_str = input(
-            f"{prompt}{'' if default is None or default == '' else f' (default: {default})'}: "
+            f"{prompt}{'' if default is None else f' (default: {default})'}:"
         ).strip()
 
         try:

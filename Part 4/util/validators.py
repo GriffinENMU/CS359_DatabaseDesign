@@ -9,3 +9,10 @@ def isPositiveInteger(value):
         return int(value) > 0
     except (ValueError, TypeError):
         return False
+
+def isValidPhone(value):
+    """
+    Returns True if `value` is 10–15 digits, False otherwise.
+    """
+    digits = ''.join(filter(str.isdigit, value))
+    return 10 <= len(digits) <= 15
