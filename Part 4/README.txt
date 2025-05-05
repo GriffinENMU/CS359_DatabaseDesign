@@ -2,6 +2,8 @@ Luis Maldonado Ramirez
 
 
 Griffin Graham
+-Created the classes menu and the related functions.
+-Provided initial validators checks for a few items.
 
 
 Marcus Giannini
